@@ -55,6 +55,17 @@ const resolvers = {
       const books = await Book.find({}).populate('author', { name: 1, born: 1, id: 1 })
       return books
     },
+    me: async (root, args, context) => {
+      const { currentUser } = context
+      if (!currentUser) {
+        throw new GraphQLError('Not authenticated', {
+          extensions: {
+            code: 'UNAUTHENTICATED'
+          }
+        })
+      }
+      return currentUser
+    }
   },
   Author: {
     bookCount: async (root) => {
