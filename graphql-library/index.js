@@ -23,6 +23,7 @@ const resolvers = {
     bookCount: async () => Book.collection.countDocuments(),
     allAuthors: async () => Author.find({}),
     allBooks: async (root, args) => {
+      console.log(root, args)
       const { author, genre } = args
       if (author && genre) {
         const books = await Book
@@ -108,6 +109,7 @@ const resolvers = {
       try {
         return await book.save()
       } catch (error) {
+        console.log(error)
         throw new GraphQLError('Book could not be saved', {
           extensions: {
             code: 'BAD_USER_INPUT',
@@ -176,7 +178,11 @@ const resolvers = {
       }
       const userFortoken = { username, id: user._id }
       const token = jwt.sign(userFortoken, process.env.JWT_SECRET)
-      return { value: token }
+      return {
+        value: token,
+        username: user.username,
+        favoriteGenre: user.favoriteGenre
+      }
     }
   }
 }
